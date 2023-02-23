@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const errorHandler = require('./middlewares/errorHandler');
-const apiRouter = require('./routes');
+const apiRouter = require('./routes/index.route');
 
 require('dotenv').config();
 
@@ -16,7 +16,7 @@ app.use(bodyParser.json());
 
 mongoose.set('strictQuery', false);
 
-mongoose.connect(`mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}.mongodb.net/?retryWrites=true&w=majority`)
+mongoose.connect(`mongodb+srv://airbnb:${process.env.MONGODB_PASSWORD}@airbnbclusterjs.szpgtab.mongodb.net/?retryWrites=true&w=majority`)
     .then(() => {
         console.log("Successfully connect to database")
     }).catch(err => console.log(err))
