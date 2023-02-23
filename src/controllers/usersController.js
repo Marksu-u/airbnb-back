@@ -1,4 +1,4 @@
-const User = require('../models/userModel');
+const User = require('../models/user.model');
 
 exports.getOneUser = (req, res) => {
     User.findById(req.userToken.id).then((user) => {

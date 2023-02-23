@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const authRouter = require('./authRoute');
+const authRouter = require('./auth.route.js');
 // const userRouter = require('./userRoute');
 
 const errorHandler = require('../middlewares/errorHandler');

@@ -1,5 +1,5 @@
-const User = require('../models/userModel');
-const bcrypt = require('bcryptjs');
+const User = require('../models/user.model.js');
+const bcrypt = require('bcrypt');
 const { jwt } = require('../helpers/jwt');
 
 exports.register = async (req, res) => {
@@ -65,3 +65,5 @@ exports.login = async (req, res) => {
             next(err);
         });
 };
+
+
