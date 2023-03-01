@@ -1,7 +1,8 @@
-const express = require('express');
+// packages import
+const express = require("express");
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const cors = require('cors');
+const cors = require("cors");
 
 const errorHandler = require('./middlewares/errorHandler');
 const apiRouter = require('./routes/index.route');
@@ -10,14 +11,15 @@ require('dotenv').config();
 
 const app = express();
 
+app.use(bodyParser.json());
+
 app.use(cors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  }));
-  
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 
-app.use(bodyParser.json());
+  }));
+
+const port = process.env.PORT || 5000;
 
 app.use("/api/v1", apiRouter);
 app.use(errorHandler);
@@ -29,6 +31,7 @@ mongoose.connect(`mongodb+srv://airbnb:${process.env.MONGODB_PASSWORD}@${process
         console.log("Successfully connect to database")
     }).catch(err => console.log(err))
 
-app.listen(process.env.PORT, function () {
-    console.log("server launched on port " + process.env.PORT);
+// console text when app is running
+app.listen(port, () => {
+    console.log(`Server listening at http://localhost:${port}`);
 });
