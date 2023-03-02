@@ -1,6 +1,7 @@
-const User = require('../models/user.model.js');
 const bcrypt = require('bcrypt');
 const { jwt } = require('../helpers/jwt');
+
+const User = require('../models/user.model.js');
 
 exports.register = async (req, res) => {
 
@@ -28,6 +29,7 @@ exports.register = async (req, res) => {
             next(err);
         });
 };
+
 
 exports.login = async (req, res) => {
     User.findOne({ email: req.body.email })
