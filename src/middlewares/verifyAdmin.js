@@ -1,11 +1,11 @@
 function verifyAdmin(req, res, next) {
-    if (!req.userToken.isAdmin) {
-      return res.status('401').send({
-        auth: false,
-        message: "You must be an Admin"
-      })
-    }
-    next();
+  if (!req.userToken.isAdmin) {
+    return res.status('401').send({
+      auth: false,
+      message: "You must be an Admin"
+    })
   }
-  
-  module.exports = verifyAdmin;
+  next();
+}
+
+module.exports = verifyAdmin;

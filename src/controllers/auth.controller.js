@@ -1,71 +1,63 @@
+const User = require("../models/user.model.js");
 const bcrypt = require('bcrypt');
-const { jwt } = require('../helpers/jwt');
+const { signJwt } = require("../helpers/signJwt.js");
 
-const User = require('../models/user.model.js');
+exports.register = (req, res, next) => {
 
-exports.register = async (req, res) => {
+const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+const newUser = new User({
+  firstName: req.body.firstName,
+  lastName: req.body.lastName,
+  email: req.body.email,
+  password: hashedPassword
+})
+newUser.save()
+  .then((user) => {
+    const userToken = signJwt({
+      id: user._id,
+      isAdmin: user.isAdmin
+    }, process.env.JWT_SECRET)
 
-    const user = new User({
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: hashedPassword
-    });
+    res.send({
+      token: userToken
+    })
+  })
+  .catch(err => {
+    next(err)
+  })
 
-    user.save()
-        .then((user) => {
-            const token = jwt({
-                id: user._id,
-                email: user.email
-            }, process.env.JWT_SECRET);
+}
 
-            res.send({
-                token: token,
-            });
+exports.login = (req, res) => {
+  User.findOne({ email: req.body.email })
+    .then((user) => {
+      if (!user) {
+        return res.status(404).send({
+          message: "User not found",
+          auth: false
         })
-        .catch(err => {
-            next(err);
-        });
-};
-
-
-exports.login = async (req, res) => {
-    User.findOne({ email: req.body.email })
-        .then((user) => {
-            if (!user) {
-                return res.status(404).send({
-                    message: "User not found",
-                    auth: false
-                });
-            }
-
-            const passwordIsValid = bcrypt.compareSync(
-                req.body.password,
-                user.password
-            );
-
-            if (!passwordIsValid) {
-                return res.status(401).send({
-                    accessToken: null,
-                    message: "Invalid Password!"
-                });
-            }
-
-            const token = jwt({
-                id: user._id,
-                email: user.email
-            }, process.env.JWT_SECRET);
-
-            res.send({
-                auth: true,
-                token: token,
-            });
+      }
+      let isPasswordValid = bcrypt.compareSync(req.body.password, user.password);
+      if (!isPasswordValid) {
+        return res.status(401).send({
+          message: "password not valid",
+          auth: false
         })
-        .catch(err => {
-            next(err);
-        });
-};
+      }
+      const userToken = signJwt({
+        id: user._id,
+        isAdmin: user.isAdmin
+      }, process.env.JWT_SECRET)
 
+      res.send({
+        auth:true,
+        message:"User logged",
+        token: userToken
+      })
 
+    })
+    .catch((err) => {
+      res.status(400).send(err);
+    })
+}

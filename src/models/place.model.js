@@ -1,75 +1,49 @@
 const mongoose = require('mongoose');
 
-// Create a schema Place with name, description, address, city, country, price, rating, images, owner that is a relation to User model, and typePlace form the typePlace model
-const placeSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 2,
-        maxlength: 50
+const placeSchema = mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+    minLength: 5,
+    maxLength: 50
+  },
+  types: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "TypePlace",
+    required: true
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User", 
+    required: true
+  },
+  pricing: {
+    perDay: Number
+  },
+  images: [String],
+  capacity: {
+    type: Number,
+    required:true
+  },
+  description: {
+    type: String,
+    required: true,
+    minLength: 20,
+    maxLength:300
+  },
+  address: {
+    city: String,
+    street: String,
+    zipCode: {
+      type: Number,
+      maxLength: 5,
+      minLength:5
     },
-    description: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 2,
-        maxlength: 255
-    },
-    address: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 2,
-        maxlength: 255
-    },
-    city: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 2,
-        maxlength: 255
-    },
-    country: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 2,
-        maxlength: 255
-    },
-    price: {
-        type: Number,
-        required: true,
-        trim: true,
-        minlength: 1,
-        maxlength: 255
-    },
-    images: [
-        {
-            url: {
-                type: String,
-                required: true,
-                trim: true,
-                minlength: 2,
-                maxlength: 255
-            },
-            filename: {
-                type: String,
-                required: true,
-                trim: true,
-                minlength: 2,
-                maxlength: 255
-            }
-        }
-    ],
-    owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
-    typePlace: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TypePlace'
+    gps: {
+      lat: Number,
+      long:Number
     }
-});
+  }
+})
 
-const Place = mongoose.model('Place', placeSchema);
+module.exports = mongoose.model('Place', placeSchema)

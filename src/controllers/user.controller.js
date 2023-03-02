@@ -1,26 +1,44 @@
-const User = require('../models/user.model');
+const User = require("../models/user.model.js");
 
-exports.getOneUser = (req, res) => {
-    User.findById(req.userToken.id).then((user) => {
+exports.updateUser = (req, res) => {
+  User.findByIdAndUpdate(req.userToken.id, req.body, { new: true })
+    .then((user) => {
       if (!user) {
         return res.status(404).send({
           message: "User not found"
         })
       }
-      res.send(user);
+      res.send(user)
     })
-      .catch(err => {
-        res.status(400).send(err)
-      })
-  }
+    .catch(err => {
+      res.status(400).send(err)
+    })
+}
 
-exports.updateUser = async (req, res) => {
-    User.findByIdAndUpdate(req.params.id, req.body, (err, user) => {
-        if (err) {
-            res.status(400).json({
-                error: 'User not found'
-            });
-        }
-        res.json(user);
-    });
-};
+exports.getOneUser = (req, res) => {
+  User.findById(req.userToken.id).then((user) => {
+    if (!user) {
+      return res.status(404).send({
+        message: "User not found"
+      })
+    }
+    res.send(user);
+  })
+    .catch(err => {
+      res.status(400).send(err)
+    })
+}
+
+exports.deleteOneUser = (req, res) => {
+  User.findByIdAndDelete(req.params.id)
+    .then(user => res.send({ message: `user with id ${user._id} successfully deleted` }))
+    .catch(err => res.status(400).send(err))
+}
+
+exports.getUsers = (req, res) => {
+  User.find().populate('places').then(
+    (users) => {
+      res.send(users)
+    })
+    .catch(err => res.send(err))
+}

@@ -1,37 +1,36 @@
-// packages import
-const express = require("express");
-const mongoose = require('mongoose');
+const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require("cors");
-
-const errorHandler = require('./middlewares/errorHandler');
-const apiRouter = require('./routes/index.route');
-
-require('dotenv').config();
-
+const mongoose = require('mongoose');
 const app = express();
+const apiRouter = require('./routes');
+const cors = require('cors');
+const errorHandler = require('./middlewares/errorHandler');
 
+require('dotenv').config()
+
+
+
+app.use(cors());
 app.use(bodyParser.json());
 
-app.use(cors({
-    origin: '*',
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+mongoose.set('strictQuery', false);
+mongoose.connect(`mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}.mongodb.net/?retryWrites=true&w=majority`)
+    .then(() => {
+        console.log("successfully connect to database")
+    })
+    .catch(err => console.log(err))
 
-  }));
-
-const port = process.env.PORT || 5000;
 
 app.use("/api/v1", apiRouter);
 app.use(errorHandler);
 
-mongoose.set('strictQuery', false);
 
-mongoose.connect(`mongodb+srv://airbnb:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER}.mongodb.net/?retryWrites=true&w=majority`)
-    .then(() => {
-        console.log("Successfully connect to database")
-    }).catch(err => console.log(err))
+// test route
+// app.get('/', (req, res) => {
+//     res.send('Hello World!')
+// })
 
-// console text when app is running
-app.listen(port, () => {
-    console.log(`Server listening at http://localhost:${port}`);
-});
+
+app.listen(process.env.PORT, function () {
+    console.log('server listening at http://localhost:' + process.env.PORT);
+})
